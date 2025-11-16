@@ -7,7 +7,7 @@ require_once 'includes/db_connect.php';
 require_once 'includes/functions.php';
 
 $page = isset($_GET['page']) ? cleanInput($_GET['page']) : 'dashboard';
-$allowedPages = ['dashboard', 'profile', 'users', 'settings', 'games', 'kelas', 'murid', 'murid_kelas', 'reminder_categories', 'reminders', 'roles', 'pj_kelas', 'login', 'logout'];
+$allowedPages = ['dashboard', 'profile', 'users', 'settings', 'games', 'kelas', 'murid', 'murid_kelas', 'reminder_categories', 'reminders', 'roles', 'pj_kelas', 'pj_murid_kelas', 'login', 'logout'];
 $publicPages   = ['login','404']; // Halaman yang tidak butuh login
 
 // Validasi halaman
@@ -69,6 +69,9 @@ switch ($page) {
         break;
     case 'pj_kelas':
         require_once 'pages/pj_kelas/index.php';
+        break;
+    case 'pj_murid_kelas':
+        require_once 'pages/pj_murid_kelas/index.php';
         break;
     default:
         echo '<h1>404 - Page Not Found</h1>';
