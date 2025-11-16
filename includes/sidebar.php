@@ -43,6 +43,56 @@
                 </a>
                 <?php endif; ?>
 
+                <!-- Kelas (Admin & Manager only) -->
+                <?php if (hasRole(['admin', 'manager'])): ?>
+                <a href="index.php?page=kelas" class="sidebar-item <?php echo $currentPage === 'kelas' ? 'active' : ''; ?> flex items-center space-x-3 px-4 py-3 rounded-xl cursor-pointer transition-all">
+                    <svg class="w-5 h-5 <?php echo $currentPage === 'kelas' ? 'text-blue-600' : 'text-gray-500'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747.777 3.332 1.253 4.5 2.027v13C19.832 18.477 18.247 18 16.5 18c-1.746.777-3.332 1.253-4.5 2.027"/>
+                    </svg>
+                    <span class="font-medium text-gray-700">Kelas</span>
+                </a>
+                <?php endif; ?>
+
+                <!-- Murid (Admin & Manager only) -->
+                <?php if (hasRole(['admin', 'manager'])): ?>
+                <a href="index.php?page=murid" class="sidebar-item <?php echo $currentPage === 'murid' ? 'active' : ''; ?> flex items-center space-x-3 px-4 py-3 rounded-xl cursor-pointer transition-all">
+                    <svg class="w-5 h-5 <?php echo $currentPage === 'murid' ? 'text-blue-600' : 'text-gray-500'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    <span class="font-medium text-gray-700">Murid</span>
+                </a>
+                <?php endif; ?>
+
+                <!-- Murid Kelas (Admin & Manager only) -->
+                <?php if (hasRole(['admin', 'manager'])): ?>
+                <a href="index.php?page=murid_kelas" class="sidebar-item <?php echo $currentPage === 'murid_kelas' ? 'active' : ''; ?> flex items-center space-x-3 px-4 py-3 rounded-xl cursor-pointer transition-all">
+                    <svg class="w-5 h-5 <?php echo $currentPage === 'murid_kelas' ? 'text-blue-600' : 'text-gray-500'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    <span class="font-medium text-gray-700">Murid Kelas</span>
+                </a>
+                <?php endif; ?>
+
+                <!-- Reminder Categories (Admin & Manager only) -->
+                <?php if (hasRole(['admin', 'manager'])): ?>
+                <a href="index.php?page=reminder_categories" class="sidebar-item <?php echo $currentPage === 'reminder_categories' ? 'active' : ''; ?> flex items-center space-x-3 px-4 py-3 rounded-xl cursor-pointer transition-all">
+                    <svg class="w-5 h-5 <?php echo $currentPage === 'reminder_categories' ? 'text-blue-600' : 'text-gray-500'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                    </svg>
+                    <span class="font-medium text-gray-700">Kategori Reminder</span>
+                </a>
+                <?php endif; ?>
+
+                <!-- Reminders (Admin & Manager only) -->
+                <?php if (hasRole(['admin', 'manager'])): ?>
+                <a href="index.php?page=reminders" class="sidebar-item <?php echo $currentPage === 'reminders' ? 'active' : ''; ?> flex items-center space-x-3 px-4 py-3 rounded-xl cursor-pointer transition-all">
+                    <svg class="w-5 h-5 <?php echo $currentPage === 'reminders' ? 'text-blue-600' : 'text-gray-500'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span class="font-medium text-gray-700">Reminder</span>
+                </a>
+                <?php endif; ?>
+
                 <!-- Profile -->
                 <a href="index.php?page=profile" class="sidebar-item <?php echo $currentPage === 'profile' ? 'active' : ''; ?> flex items-center space-x-3 px-4 py-3 rounded-xl cursor-pointer transition-all">
                     <svg class="w-5 h-5 <?php echo $currentPage === 'profile' ? 'text-blue-600' : 'text-gray-500'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">

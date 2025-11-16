@@ -3,11 +3,11 @@
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
-define('DB_NAME', 'admin_panel_db');
+define('DB_NAME', 'sistem_siap_ingat');
 
 // Konfigurasi Aplikasi
 define('SITE_NAME', 'AdminPanel');
-define('BASE_URL', 'http://localhost/latihan/struktur-ai/');
+define('BASE_URL', 'http://localhost/sistem-siap-ingat/');
 define('UPLOAD_PATH', __DIR__ . '/assets/uploads/');
 
 // Konfigurasi Session

@@ -1,11 +1,11 @@
 -- ==========================================
 -- Admin Panel Database Schema
--- Database: admin_panel_db
+-- Database: sistem_siap_ingat
 -- ==========================================
 
 -- Create database
-CREATE DATABASE IF NOT EXISTS admin_panel_db;
-USE admin_panel_db;
+CREATE DATABASE IF NOT EXISTS sistem_siap_ingat;
+USE sistem_siap_ingat;
 
 -- ==========================================
 -- Table: roles
@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS roles (
 -- Insert default roles
 INSERT INTO roles (role_name, description) VALUES
 ('admin', 'Full system access with all permissions'),
-('manager', 'Management level access with limited permissions'),
-('staff', 'Basic staff access for daily operations'),
+('pj', 'Management level access with limited permissions'),
+('murid', 'Basic staff access for daily operations'),
 ('user', 'Regular user access with minimal permissions');
 
 -- ==========================================
@@ -200,7 +200,7 @@ CREATE INDEX idx_activity_user_date ON activity_logs(user_id, created_at);
 
 -- Example for production:
 -- CREATE USER 'admin_panel_user'@'localhost' IDENTIFIED BY 'your_secure_password';
--- GRANT SELECT, INSERT, UPDATE, DELETE ON admin_panel_db.* TO 'admin_panel_user'@'localhost';
+-- GRANT SELECT, INSERT, UPDATE, DELETE ON sistem_siap_ingat.* TO 'admin_panel_user'@'localhost';
 -- FLUSH PRIVILEGES;
 
 -- ==========================================
@@ -209,4 +209,4 @@ CREATE INDEX idx_activity_user_date ON activity_logs(user_id, created_at);
 
 SELECT 'Database created successfully!' as message;
 SELECT 'Default admin credentials:' as info, 'Username: admin, Password: admin123' as credentials;
-SELECT 'Total tables created:' as info, COUNT(*) as count FROM information_schema.tables WHERE table_schema = 'admin_panel_db';
+SELECT 'Total tables created:' as info, COUNT(*) as count FROM information_schema.tables WHERE table_schema = 'sistem_siap_ingat';
