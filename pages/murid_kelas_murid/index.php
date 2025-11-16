@@ -174,7 +174,7 @@ $userClasses = $classesStmt->fetchAll();
 
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t">
                         <span class="text-sm text-gray-500">
-                            Token Kelas: <span class="font-mono bg-gray-100 px-2 py-1 rounded"><?php echo htmlspecialchars($kelas['token'] ?? ''); ?></span>
+                            <!-- Token Kelas: <span class="font-mono bg-gray-100 px-2 py-1 rounded"><?php echo htmlspecialchars($kelas['token'] ?? ''); ?></span> -->
                         </span>
 
                         <form method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin keluar dari kelas <?php echo addslashes(htmlspecialchars($kelas['nama_kelas'])); ?>?');">

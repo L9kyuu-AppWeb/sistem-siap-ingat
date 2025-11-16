@@ -53,7 +53,7 @@ $num1 = rand(1, 8);
 $num2 = rand(1, 5);
 $operation = rand(0, 1); // 0 for addition, 1 for subtraction
 $operation_symbol = $operation === 0 ? '+' : '+';
-$answer = $operation === 0 ? $num1 + $num2 : $num1 - $num2;
+$answer = $operation === 0 ? $num1 + $num2 : $num1 + $num2;
 
 // Store correct answer in session
 $_SESSION['captcha'] = $answer;
@@ -95,6 +95,12 @@ $_SESSION['captcha'] = $answer;
             </div>
             <?php endif; ?>
 
+            <?php if (isset($_GET['registered'])): ?>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-4">
+                Registrasi berhasil! Silakan login untuk melanjutkan.
+            </div>
+            <?php endif; ?>
+
             <form method="POST" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Username atau Email</label>
@@ -131,6 +137,7 @@ $_SESSION['captcha'] = $answer;
 
             <div class="mt-6 text-center text-sm text-gray-500">
                 <p>Demo Login: <strong>admin</strong> / <strong>admin123</strong></p>
+                <p class="mt-2">Belum punya akun? <a href="index.php?page=register" class="text-blue-600 hover:text-blue-800 font-medium">Daftar di sini</a></p>
             </div>
         </div>
     </div>

@@ -7,8 +7,8 @@ require_once 'includes/db_connect.php';
 require_once 'includes/functions.php';
 
 $page = isset($_GET['page']) ? cleanInput($_GET['page']) : 'dashboard';
-$allowedPages = ['dashboard', 'profile', 'users', 'settings', 'games', 'kelas', 'murid', 'murid_kelas', 'reminder_categories', 'reminders', 'roles', 'pj_kelas', 'pj_murid_kelas', 'pj_reminder', 'murid_reminder', 'murid_kelas_murid', 'login', 'logout'];
-$publicPages   = ['login','404']; // Halaman yang tidak butuh login
+$allowedPages = ['dashboard', 'profile', 'users', 'settings', 'games', 'kelas', 'murid', 'murid_kelas', 'reminder_categories', 'reminders', 'roles', 'pj_kelas', 'pj_murid_kelas', 'pj_reminder', 'murid_reminder', 'murid_kelas_murid', 'login', 'logout', 'register'];
+$publicPages   = ['login','register','404']; // Halaman yang tidak butuh login
 
 // Validasi halaman
 if (!in_array($page, $allowedPages)) {
@@ -30,6 +30,9 @@ switch ($page) {
         break;
     case 'logout':
         require_once 'pages/auth/logout.php';
+        break;
+    case 'register':
+        require_once 'pages/auth/register.php';
         break;
     case '404':
         require_once 'pages/errors/404.php';
