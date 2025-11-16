@@ -93,17 +93,17 @@ switch ($action) {
                    class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
         </div>
         <select name="kelas" class="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
-            <option value="">Semua Kelas</option>
+            <option value="" <?php echo $kelasFilter === '' ? 'selected' : ''; ?>>Semua Kelas</option>
             <?php foreach ($kelasList as $kelas): ?>
-                <option value="<?php echo $kelas['id']; ?>" <?php echo $kelasFilter === $kelas['id'] ? 'selected' : ''; ?>>
+                <option value="<?php echo $kelas['id']; ?>" <?php echo (string)$kelasFilter === (string)$kelas['id'] ? 'selected' : ''; ?>>
                     <?php echo htmlspecialchars($kelas['nama_kelas']); ?>
                 </option>
             <?php endforeach; ?>
         </select>
         <select name="category" class="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
-            <option value="">Semua Kategori</option>
+            <option value="" <?php echo $categoryFilter === '' ? 'selected' : ''; ?>>Semua Kategori</option>
             <?php foreach ($categoryList as $category): ?>
-                <option value="<?php echo $category['id']; ?>" <?php echo $categoryFilter === $category['id'] ? 'selected' : ''; ?>>
+                <option value="<?php echo $category['id']; ?>" <?php echo (string)$categoryFilter === (string)$category['id'] ? 'selected' : ''; ?>>
                     <?php echo htmlspecialchars($category['nama_kategori']); ?>
                 </option>
             <?php endforeach; ?>

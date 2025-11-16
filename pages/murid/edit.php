@@ -51,8 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ");
 
                 if ($stmt->execute([$nama_lengkap, $email, $no_hp, $muridId])) {
+                    // Also update the corresponding user account if it exists
+                    $userUpdateStmt = $pdo->prepare("UPDATE users SET first_name = ?, email = ? WHERE username = ?");
+                    $userUpdateStmt->execute([$nama_lengkap, $email, "murid$muridId"]);
+
                     logActivity($_SESSION['user_id'], 'update_murid', "Updated murid: $nama_lengkap");
-                    setAlert('success', 'Murid berhasil diperbarui!');
+                    setAlert('success', 'Murid dan akun user berhasil diperbarui!');
                     redirect('index.php?page=murid');
                 } else {
                     $error = 'Gagal memperbarui murid!';

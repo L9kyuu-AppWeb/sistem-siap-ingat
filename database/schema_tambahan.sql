@@ -60,3 +60,22 @@ CREATE TABLE murid_kategori_preference (
     FOREIGN KEY (murid_id) REFERENCES murid(id),
     FOREIGN KEY (category_id) REFERENCES reminder_categories(id)
 );
+
+DELIMITER $$
+
+CREATE TRIGGER after_insert_murid
+AFTER INSERT ON murid
+FOR EACH ROW
+BEGIN
+    INSERT INTO users (username, email, password, first_name, last_name, role_id)
+    VALUES (
+        CONCAT('murid', NEW.id),
+        NEW.email,
+        '$2y$10$1a2ChhalCTxlAB2Scl8OzuOoQLvV6WMqKGmJ3a4vtxhBCqvAIfp7e', -- password default
+        NEW.nama_lengkap,
+        '',
+        3 -- role murid
+    );
+END$$
+
+DELIMITER ;

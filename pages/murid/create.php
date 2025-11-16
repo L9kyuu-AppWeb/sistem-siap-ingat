@@ -28,6 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->fetch()) {
                 $error = 'Email murid sudah digunakan!';
             } else {
+                // Start transaction to ensure both murid and user records are created together
+                $pdo->beginTransaction();
+
                 // Insert murid into database
                 $stmt = $pdo->prepare("
                     INSERT INTO murid (nama_lengkap, email, no_hp)
@@ -37,9 +40,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($stmt->execute([$nama_lengkap, $email, $no_hp])) {
                     $muridId = $pdo->lastInsertId();
 
-                    logActivity($_SESSION['user_id'], 'create_murid', "Created new murid: $nama_lengkap");
-                    setAlert('success', 'Murid berhasil ditambahkan!');
-                    redirect('index.php?page=murid');
+                    // Create corresponding user account with murid role
+                    $roleStmt = $pdo->prepare("SELECT id FROM roles WHERE role_name = 'murid'");
+                    $roleStmt->execute();
+                    $role = $roleStmt->fetch();
+
+                    if ($role) {
+                        $roleId = $role['id'];
+                        $username = 'murid' . $muridId;  // Create username as murid + id
+                        $hashedPassword = password_hash('murid123', PASSWORD_DEFAULT); // Default password
+
+                        // Create the user, but ignore if it already exists (might have been created by trigger)
+                        try {
+                            $userStmt = $pdo->prepare("
+                                INSERT INTO users (username, email, password, first_name, role_id)
+                                VALUES (?, ?, ?, ?, ?)
+                            ");
+
+                            // Execute user creation - if it fails due to duplicate, continue anyway
+                            $userStmt->execute([$username, $email, $hashedPassword, $nama_lengkap, $roleId]);
+
+                            $pdo->commit();
+                            logActivity($_SESSION['user_id'], 'create_murid', "Created new murid: $nama_lengkap");
+                            setAlert('success', 'Murid dan akun user berhasil ditambahkan!');
+                            redirect('index.php?page=murid');
+                        } catch (PDOException $e) {
+                            // If user creation failed due to duplicate entry, that's OK - commit the transaction anyway
+                            // The user might have been created by a database trigger
+                            if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
+                                $pdo->commit();
+                                logActivity($_SESSION['user_id'], 'create_murid', "Created new murid: $nama_lengkap");
+                                setAlert('success', 'Murid dan akun user berhasil ditambahkan!');
+                                redirect('index.php?page=murid');
+                            } else {
+                                // Some other error occurred
+                                $pdo->rollback();
+                                $error = 'Gagal menambahkan akun user: ' . $e->getMessage();
+                            }
+                        }
+                    } else {
+                        $pdo->rollback();
+                        $error = 'Role murid tidak ditemukan!';
+                    }
                 } else {
                     $error = 'Gagal menambahkan murid!';
                 }
