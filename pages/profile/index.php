@@ -3,10 +3,9 @@ $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $firstName = cleanInput($_POST['first_name']);
-    $lastName = cleanInput($_POST['last_name']);
     $email = cleanInput($_POST['email']);
     $phone = cleanInput($_POST['phone']);
-    
+
     if (empty($firstName) || empty($email)) {
         $error = 'Nama depan dan email harus diisi!';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -15,17 +14,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check if email already exists for other users
         $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
         $stmt->execute([$email, $_SESSION['user_id']]);
-        
+
         if ($stmt->fetch()) {
             $error = 'Email sudah digunakan oleh pengguna lain!';
         } else {
-            $stmt = $pdo->prepare("
-                UPDATE users 
-                SET first_name = ?, last_name = ?, email = ?, phone = ? 
+            // First, update the users table (set last_name to null)
+            $updateUserStmt = $pdo->prepare("
+                UPDATE users
+                SET first_name = ?, last_name = NULL, email = ?, phone = ?
                 WHERE id = ?
             ");
-            
-            if ($stmt->execute([$firstName, $lastName, $email, $phone, $_SESSION['user_id']])) {
+
+            if ($updateUserStmt->execute([$firstName, $email, $phone, $_SESSION['user_id']])) {
+                // Get the corresponding murid ID from the username pattern (murid{id})
+                $currentUser = getCurrentUser();
+                $userMuridId = null;
+
+                if (preg_match('/^murid(\d+)$/', $currentUser['username'], $matches)) {
+                    $userMuridId = (int)$matches[1];
+
+                    // Update the murid table
+                    $updateMuridStmt = $pdo->prepare("
+                        UPDATE murid
+                        SET nama_lengkap = ?, email = ?, no_hp = ?
+                        WHERE id = ?
+                    ");
+                    $updateMuridStmt->execute([$firstName, $email, $phone, $userMuridId]);
+                }
+
                 logActivity($_SESSION['user_id'], 'update_profile', 'User updated profile information');
                 setAlert('success', 'Profil berhasil diperbarui!');
                 redirect('index.php?page=profile');
@@ -39,6 +55,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get fresh user data
 $currentUser = getCurrentUser();
+
+// For murid users, also get murid-specific data
+$userMuridId = null;
+$currentUserMurid = null;
+
+if (preg_match('/^murid(\d+)$/', $currentUser['username'], $matches)) {
+    $userMuridId = (int)$matches[1];
+    $muridStmt = $pdo->prepare("SELECT * FROM murid WHERE id = ?");
+    $muridStmt->execute([$userMuridId]);
+    $currentUserMurid = $muridStmt->fetch();
+
+    // Override with murid-specific data if available
+    if ($currentUserMurid) {
+        // Use murid data for display, but keep user data for other purposes
+        $currentUser['first_name'] = $currentUser['first_name'] ?? $currentUserMurid['nama_lengkap'];
+        $currentUser['phone'] = $currentUser['phone'] ?? $currentUserMurid['no_hp'];
+        $currentUser['email'] = $currentUser['email'] ?? $currentUserMurid['email'];
+    }
+}
 ?>
 
 <div class="mb-6">
@@ -87,7 +122,7 @@ $currentUser = getCurrentUser();
                 </svg>
                 <div class="flex-1 min-w-0">
                     <p class="text-xs text-gray-500">Telepon</p>
-                    <p class="text-gray-700 font-medium"><?php echo htmlspecialchars($currentUser['phone']); ?></p>
+                    <p class="text-gray-700 font-medium"><?php echo htmlspecialchars($currentUser['phone'] ?? ''); ?></p>
                 </div>
             </div>
             <?php endif; ?>
@@ -98,7 +133,7 @@ $currentUser = getCurrentUser();
                 </svg>
                 <div class="flex-1 min-w-0">
                     <p class="text-xs text-gray-500">Bergabung</p>
-                    <p class="text-gray-700 font-medium"><?php echo formatDate($currentUser['created_at']); ?></p>
+                    <p class="text-gray-700 font-medium"><?php echo formatDate($currentUser['created_at'] ?? ''); ?></p>
                 </div>
             </div>
             
@@ -120,21 +155,13 @@ $currentUser = getCurrentUser();
     <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6">
         <h3 class="text-lg font-bold text-gray-800 mb-6">Informasi Pribadi</h3>
         <form method="POST" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Nama Depan <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="first_name" required 
-                           value="<?php echo htmlspecialchars($currentUser['first_name']); ?>"
-                           class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Belakang</label>
-                    <input type="text" name="last_name" 
-                           value="<?php echo htmlspecialchars($currentUser['last_name']); ?>"
-                           class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
-                </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Nama Depan <span class="text-red-500">*</span>
+                </label>
+                <input type="text" name="first_name" required
+                       value="<?php echo htmlspecialchars($currentUser['first_name']); ?>"
+                       class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
             </div>
             
             <div>
@@ -148,8 +175,8 @@ $currentUser = getCurrentUser();
             
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Nomor Telepon</label>
-                <input type="tel" name="phone" 
-                       value="<?php echo htmlspecialchars($currentUser['phone']); ?>"
+                <input type="tel" name="phone"
+                       value="<?php echo htmlspecialchars($currentUser['phone'] ?? ''); ?>"
                        placeholder="+62 812-3456-7890"
                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
             </div>

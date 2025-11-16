@@ -64,6 +64,9 @@ function logActivity($userId, $type, $description) {
 
 // Format date Indonesia
 function formatDate($date) {
+    if ($date === null || $date === '') {
+        return '';
+    }
     return date('d F Y H:i', strtotime($date));
 }
 
