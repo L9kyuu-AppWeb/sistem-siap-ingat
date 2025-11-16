@@ -83,6 +83,26 @@
                 </a>
                 <?php endif; ?>
 
+                <!-- Reminder for PJ (Penanggung Jawab) -->
+                <?php if (hasRole(['pj', 'admin'])): ?>
+                <a href="index.php?page=pj_reminder" class="sidebar-item <?php echo $currentPage === 'pj_reminder' ? 'active' : ''; ?> flex items-center space-x-3 px-4 py-3 rounded-xl cursor-pointer transition-all">
+                    <svg class="w-5 h-5 <?php echo $currentPage === 'pj_reminder' ? 'text-blue-600' : 'text-gray-500'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span class="font-medium text-gray-700">Reminder Saya</span>
+                </a>
+                <?php endif; ?>
+
+                <!-- Reminder for Murid and PJ -->
+                <?php if (hasRole(['murid', 'pj', 'admin'])): ?>
+                <a href="index.php?page=murid_reminder" class="sidebar-item <?php echo $currentPage === 'murid_reminder' ? 'active' : ''; ?> flex items-center space-x-3 px-4 py-3 rounded-xl cursor-pointer transition-all">
+                    <svg class="w-5 h-5 <?php echo $currentPage === 'murid_reminder' ? 'text-blue-600' : 'text-gray-500'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span class="font-medium text-gray-700">Reminder Kelas</span>
+                </a>
+                <?php endif; ?>
+
                 <!-- Murid Kelas (Admin & Manager only) -->
                 <?php if (hasRole(['admin', 'manager'])): ?>
                 <a href="index.php?page=murid_kelas" class="sidebar-item <?php echo $currentPage === 'murid_kelas' ? 'active' : ''; ?> flex items-center space-x-3 px-4 py-3 rounded-xl cursor-pointer transition-all">
