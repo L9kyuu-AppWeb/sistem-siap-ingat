@@ -153,3 +153,30 @@ function getImageUrl($imageName, $imageType = 'general') {
     return BASE_URL . 'assets/uploads/' . $imageType . '/' . $imageName;
 }
 
+// Generate unique token
+function generateUniqueToken($pdo, $table = 'kelas', $length = 6, $maxAttempts = 10) {
+    $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $attempts = 0;
+
+    do {
+        $token = '';
+        for ($i = 0; $i < $length; $i++) {
+            $token .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        // Check if token already exists
+        $stmt = $pdo->prepare("SELECT id FROM `$table` WHERE token = ?");
+        $stmt->execute([$token]);
+        $existing = $stmt->fetch();
+
+        $attempts++;
+
+        if ($attempts >= $maxAttempts) {
+            // If we can't find a unique token after max attempts, try with longer length
+            return generateUniqueToken($pdo, $table, $length + 1, $maxAttempts);
+        }
+    } while ($existing);
+
+    return $token;
+}
+
