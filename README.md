@@ -1,99 +1,103 @@
-# **📘 Siap Ingat – Dokumentasi Sistem**
-
-Sistem **Siap Ingat** adalah platform pengelolaan kelas dan pengingat (reminder) yang digunakan oleh Admin, PJ Kelas, dan Murid untuk memastikan kegiatan kelas berjalan teratur dan terpantau.
-
-Dokumentasi ini menjelaskan **role**, **hak akses**, dan **alur aktivitas** dalam sistem.
+# 📝 Sistem Siap Ingat
+Sistem Siap Ingat adalah platform manajemen kelas dan pengingat (reminder) yang digunakan oleh Admin, Penanggung Jawab (PJ) Kelas, dan Murid untuk mengelola kegiatan, informasi kelas, serta pengingat secara terpusat.
 
 ---
 
-## **👤 1. Role & Hak Akses**
+## 🚀 Fitur Utama
 
-### **🛠️ Admin**
+### 👑 Admin
+Admin memiliki akses penuh untuk mengelola seluruh data dalam sistem:
 
-Admin memiliki akses penuh untuk mengelola seluruh data dan konfigurasi sistem.
-
-Fitur yang dapat dikelola:
-
-* Role (Admin, PJ Kelas, Murid)
-* User
-* Murid
-* Kelas
-* Murid dalam Kelas
-* Kategori Reminder
-* Reminder:
-
-  * Reminder Global (untuk semua kelas)
-  * Reminder Khusus Per Kelas
-* Profil
-* Setting (Ganti Password)
+- Mengelola **Role**
+- Mengelola **User**
+- Mengelola **Murid**
+- Mengelola **Kelas**
+- Mengelola **Murid dalam Kelas**
+- Mengelola **Kategori Reminder**
+- Mengelola **Reminder** (Global & Per Kelas)
+- Mengelola **Profil**
+- **Ganti Password**
 
 ---
 
-### **👨‍🏫 PJ Kelas**
+### 🧑‍🏫 PJ Kelas
+PJ Kelas memiliki akses terbatas pada kelas yang mereka tangani:
 
-Penanggung Jawab Kelas hanya mengelola kelas yang ditugaskan kepadanya.
-
-Fitur PJ:
-
-* Melihat dan mengelola informasi kelas
-* Mengganti token kelas
-* Mengelola murid dalam kelas
-* Membuat reminder khusus untuk kelasnya
-* Melihat reminder global & reminder kelas
-
----
-
-### **🎓 Murid**
-
-Murid memiliki akses terbatas.
-
-Fitur murid:
-
-* Melihat informasi kelas yang diikuti
-* Melihat seluruh reminder yang berlaku untuk kelas
+- Melihat & mengelola **informasi kelas**
+- **Mengganti token kelas**
+- Mengelola **Murid dalam Kelas**
+- Membuat **Reminder khusus kelas**
+- Melihat **Reminder Global** & **Reminder Kelas**
+- Mengelola **Profil**
+- **Ganti Password**
 
 ---
 
-## **🔄 2. Alur Aktivitas Sistem**
+### 🎓 Murid
+Murid hanya dapat melihat data yang relevan dengan kelasnya:
 
-### **1️⃣ Registrasi Murid**
-
-* Murid melakukan registrasi melalui sistem.
-* Jika murid adalah **PJ Kelas**, maka admin akan menambahkan murid tersebut secara manual dan memberi role PJ.
-* Jika bukan PJ, pengguna otomatis menjadi **Murid biasa**.
-
----
-
-### **2️⃣ Admin Menambahkan Kelas**
-
-Saat membuat kelas baru, admin akan:
-
-1. Memilih PJ Kelas
-2. Menambahkan kategori reminder yang diperlukan
-3. Membuat reminder:
-
-   * Global (berlaku untuk semua kelas)
-   * Khusus untuk kelas tertentu
+- Melihat **Informasi Kelas**
+- Melihat **Reminder Global & Reminder Kelas**
+- Mengelola **Profil**
+- **Ganti Password**
 
 ---
 
-### **3️⃣ Pengelolaan Kelas oleh PJ Kelas**
+## 🔄 Alur Sistem
 
-Setelah kelas aktif:
-
-1. PJ melihat informasi kelas
-2. Mengganti token kelas jika diperlukan
-   (Token digunakan murid untuk bergabung ke kelas)
-3. Membagikan token kelas kepada murid
-4. Membuat reminder khusus untuk kelasnya
+### 1️⃣ Registrasi
+- Jika user mendaftar sebagai **Murid**, akun langsung dibuat.
+- Jika user seharusnya menjadi **PJ Kelas**, maka **Admin** yang akan menambahkannya dan menetapkan rolenya.
 
 ---
 
-## **📘 Ringkasan Sistem**
+### 2️⃣ Pengelolaan Kelas oleh Admin
+Admin dapat:
+1. Membuat **Kelas baru**
+2. Menentukan **PJ Kelas**
+3. Menambahkan **Kategori Reminder**
+4. Membuat **Reminder Global** atau **Reminder khusus kelas**
 
-* **Admin**: Pusat kontrol seluruh sistem
-* **PJ Kelas**: Pengelola kelas masing-masing
-* **Murid**: Penerima informasi dan reminder
+---
 
-Alur singkat sistem:
-**Registrasi → Pembuatan Kelas → Pengaturan Reminder → Murid menerima Informasi**
+### 3️⃣ Aktivitas PJ Kelas
+PJ Kelas dapat:
+- Melihat detail kelas
+- **Mengganti token kelas** dan membagikannya ke murid
+- Mengelola murid dalam kelas
+- Membuat **Reminder untuk kelas tersebut**
+
+---
+
+## 📌 Ringkasan Role
+| Role       | Akses                                                                 |
+|------------|-----------------------------------------------------------------------|
+| **Admin**  | Full control: semua data, kelas, user, reminder, kategori, setting    |
+| **PJ Kelas** | Kelola kelasnya sendiri + reminder kelas                             |
+| **Murid**  | Lihat informasi kelas & reminder                                       |
+
+---
+
+## 🛠 Teknologi (Opsional)
+_Tambahkan bagian ini sesuai stack yang digunakan:_
+- Laravel / Node.js / Express / React / Next.js / Vue
+- MySQL / PostgreSQL
+- TailwindCSS / Bootstrap
+- JWT / Sanctum Auth
+
+---
+
+## 📁 Struktur Folder (Opsional)
+_Tambahkan setelah project dibuat._
+
+---
+
+## 📄 Lisensi
+Sistem ini digunakan untuk kebutuhan internal dan tidak untuk distribusi publik (ubah sesuai kebutuhan).
+
+---
+
+## ✍ Kontributor
+- **L9kyuu / Next.Buildapp** – Developer Sistem Siap Ingat
+
+---
