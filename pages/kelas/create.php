@@ -27,20 +27,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->fetch()) {
             $error = 'Nama kelas sudah digunakan!';
         } else {
-            // Insert kelas into database
-            $stmt = $pdo->prepare("
-                INSERT INTO kelas (nama_kelas, tahun_ajaran, pj_id, token)
-                VALUES (?, ?, ?, ?)
-            ");
+            // Check if the selected murid is already a penanggung jawab for another class
+            $checkStmt = $pdo->prepare("SELECT id FROM kelas WHERE pj_id = ?");
+            $checkStmt->execute([$pj_id]);
+            $existingClass = $checkStmt->fetch();
 
-            if ($stmt->execute([$nama_kelas, $tahun_ajaran, $pj_id, $token])) {
-                $kelasId = $pdo->lastInsertId();
-
-                logActivity($_SESSION['user_id'], 'create_kelas', "Created new kelas: $nama_kelas");
-                setAlert('success', 'Kelas berhasil ditambahkan!');
-                redirect('index.php?page=kelas');
+            if ($existingClass) {
+                $error = 'Murid yang dipilih sudah menjadi penanggung jawab kelas lain!';
             } else {
-                $error = 'Gagal menambahkan kelas!';
+                // Check if the selected murid is already a member of any class
+                $checkStmt = $pdo->prepare("SELECT k.id, k.nama_kelas FROM murid_kelas mk JOIN kelas k ON mk.kelas_id = k.id WHERE mk.murid_id = ?");
+                $checkStmt->execute([$pj_id]);
+                $existingMembership = $checkStmt->fetch();
+
+                if ($existingMembership) {
+                    $error = 'Murid yang dipilih sudah berada di kelas: ' . $existingMembership['nama_kelas'];
+                } else {
+                    // Insert kelas into database
+                    $stmt = $pdo->prepare("
+                        INSERT INTO kelas (nama_kelas, tahun_ajaran, pj_id, token)
+                        VALUES (?, ?, ?, ?)
+                    ");
+
+                    if ($stmt->execute([$nama_kelas, $tahun_ajaran, $pj_id, $token])) {
+                        $kelasId = $pdo->lastInsertId();
+
+                        // Update the murid's corresponding user role to 'pj' (role_id = 2)
+                        $muridStmt = $pdo->prepare("SELECT * FROM murid WHERE id = ?");
+                        $muridStmt->execute([$pj_id]);
+                        $murid = $muridStmt->fetch();
+
+                        if ($murid) {
+                            $username = 'murid' . $pj_id; // Based on the naming convention
+                            $updateRoleStmt = $pdo->prepare("UPDATE users SET role_id = 2 WHERE username = ?");
+                            $updateRoleStmt->execute([$username]);
+                        }
+
+                        logActivity($_SESSION['user_id'], 'create_kelas', "Created new kelas: $nama_kelas");
+                        setAlert('success', 'Kelas berhasil ditambahkan!');
+                        redirect('index.php?page=kelas');
+                    } else {
+                        $error = 'Gagal menambahkan kelas!';
+                    }
+                }
             }
         }
     }

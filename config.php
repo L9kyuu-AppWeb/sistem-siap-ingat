@@ -7,7 +7,7 @@ define('DB_NAME', 'sistem_siap_ingat');
 
 // Konfigurasi Aplikasi
 define('SITE_NAME', 'Siap Ingat');
-define('BASE_URL', 'http://localhost/sistem-siap-ingat/');
+define('BASE_URL', 'http://assuring-quail-real.ngrok-free.app/sistem-siap-ingat/');
 define('UPLOAD_PATH', __DIR__ . '/assets/uploads/');
 
 // Konfigurasi Session

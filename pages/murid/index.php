@@ -23,18 +23,18 @@ switch ($action) {
         $kelasFilter = isset($_GET['kelas']) ? cleanInput($_GET['kelas']) : '';
         $tahunAjaranFilter = isset($_GET['tahun_ajaran']) ? cleanInput($_GET['tahun_ajaran']) : '';
 
-        $sql = "SELECT m.*, GROUP_CONCAT(k.nama_kelas SEPARATOR ', ') as kelas_nama FROM murid m LEFT JOIN murid_kelas mk ON m.id = mk.murid_id LEFT JOIN kelas k ON mk.kelas_id = k.id WHERE 1=1 GROUP BY m.id";
+        $sql = "SELECT m.*, (SELECT GROUP_CONCAT(k2.nama_kelas SEPARATOR ', ') FROM murid_kelas mk2 LEFT JOIN kelas k2 ON mk2.kelas_id = k2.id WHERE mk2.murid_id = m.id) as kelas_nama FROM murid m WHERE 1=1";
 
         if ($search) {
             $sql .= " AND (m.nama_lengkap LIKE :search1 OR m.email LIKE :search2 OR m.no_hp LIKE :search3)";
         }
 
         if ($kelasFilter) {
-            $sql .= " AND mk.kelas_id = :kelas_id";
+            $sql .= " AND m.id IN (SELECT murid_id FROM murid_kelas WHERE kelas_id = :kelas_id)";
         }
 
         if ($tahunAjaranFilter) {
-            $sql .= " AND k.tahun_ajaran = :tahun_ajaran";
+            $sql .= " AND m.id IN (SELECT DISTINCT mk.murid_id FROM murid_kelas mk JOIN kelas k ON mk.kelas_id = k.id WHERE k.tahun_ajaran = :tahun_ajaran)";
         }
 
         $sql .= " ORDER BY m.nama_lengkap ASC";

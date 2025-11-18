@@ -24,9 +24,25 @@ if (!$kelas) {
 // Delete kelas
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
+        // Get the penanggung jawab ID before deleting the class
+        $oldPjId = $kelas['pj_id'];
+
         // Delete the kelas from database
         $stmt = $pdo->prepare("DELETE FROM kelas WHERE id = ?");
         if ($stmt->execute([$kelasId])) {
+            // If the class had a penanggung jawab, reset their role back to 'murid' (role_id = 3)
+            if ($oldPjId) {
+                $oldMuridStmt = $pdo->prepare("SELECT * FROM murid WHERE id = ?");
+                $oldMuridStmt->execute([$oldPjId]);
+                $oldMurid = $oldMuridStmt->fetch();
+
+                if ($oldMurid) {
+                    $oldUsername = 'murid' . $oldPjId;
+                    $updateRoleStmt = $pdo->prepare("UPDATE users SET role_id = 3 WHERE username = ?"); // Reset to murid role
+                    $updateRoleStmt->execute([$oldUsername]);
+                }
+            }
+
             logActivity($_SESSION['user_id'], 'delete_kelas', "Deleted kelas: " . $kelas['nama_kelas']);
             setAlert('success', 'Kelas berhasil dihapus!');
         } else {

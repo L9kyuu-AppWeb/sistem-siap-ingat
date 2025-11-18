@@ -39,19 +39,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->fetch()) {
             $error = 'Nama kelas sudah digunakan!';
         } else {
-            // Update kelas in database
-            $stmt = $pdo->prepare("
-                UPDATE kelas
-                SET nama_kelas = ?, tahun_ajaran = ?, pj_id = ?
-                    WHERE id = ?
-            ");
+            // Check if the selected murid is already a penanggung jawab for another class (excluding current class)
+            $checkStmt = $pdo->prepare("SELECT id FROM kelas WHERE pj_id = ? AND id != ?");
+            $checkStmt->execute([$pj_id, $kelasId]);
+            $existingClass = $checkStmt->fetch();
 
-            if ($stmt->execute([$nama_kelas, $tahun_ajaran, $pj_id, $kelasId])) {
-                logActivity($_SESSION['user_id'], 'update_kelas', "Updated kelas: $nama_kelas");
-                setAlert('success', 'Kelas berhasil diperbarui!');
-                redirect('index.php?page=kelas');
+            if ($existingClass) {
+                $error = 'Murid yang dipilih sudah menjadi penanggung jawab kelas lain!';
             } else {
-                $error = 'Gagal memperbarui kelas!';
+                // Check if the selected murid is already a member of any other class (not the same class they're being assigned to as PJ)
+                $checkStmt = $pdo->prepare("
+                    SELECT k.id, k.nama_kelas
+                    FROM murid_kelas mk
+                    JOIN kelas k ON mk.kelas_id = k.id
+                    WHERE mk.murid_id = ? AND k.id != ?
+                ");
+                $checkStmt->execute([$pj_id, $kelasId]); // Exclude the current class being edited
+                $existingMembership = $checkStmt->fetch();
+
+                if ($existingMembership) {
+                    $error = 'Murid yang dipilih sudah berada di kelas: ' . $existingMembership['nama_kelas'];
+                } else {
+                    // Get the previous penanggung jawab to reset their role if needed
+                    $oldPjId = $kelas['pj_id'];
+
+                    // Update kelas in database
+                    $stmt = $pdo->prepare("
+                        UPDATE kelas
+                        SET nama_kelas = ?, tahun_ajaran = ?, pj_id = ?
+                            WHERE id = ?
+                    ");
+
+                    if ($stmt->execute([$nama_kelas, $tahun_ajaran, $pj_id, $kelasId])) {
+                        // If there was a previous penanggung jawab, reset their role back to 'murid' (role_id = 3)
+                        if ($oldPjId && $oldPjId != $pj_id) {
+                            $oldMuridStmt = $pdo->prepare("SELECT * FROM murid WHERE id = ?");
+                            $oldMuridStmt->execute([$oldPjId]);
+                            $oldMurid = $oldMuridStmt->fetch();
+
+                            if ($oldMurid) {
+                                $oldUsername = 'murid' . $oldPjId;
+                                $updateRoleStmt = $pdo->prepare("UPDATE users SET role_id = 3 WHERE username = ?"); // Reset to murid role
+                                $updateRoleStmt->execute([$oldUsername]);
+                            }
+                        }
+
+                        // Update the new penanggung jawab's role to 'pj' (role_id = 2)
+                        $newMuridStmt = $pdo->prepare("SELECT * FROM murid WHERE id = ?");
+                        $newMuridStmt->execute([$pj_id]);
+                        $newMurid = $newMuridStmt->fetch();
+
+                        if ($newMurid) {
+                            $newUsername = 'murid' . $pj_id;
+                            $updateRoleStmt = $pdo->prepare("UPDATE users SET role_id = 2 WHERE username = ?");
+                            $updateRoleStmt->execute([$newUsername]);
+                        }
+
+                        logActivity($_SESSION['user_id'], 'update_kelas', "Updated kelas: $nama_kelas");
+                        setAlert('success', 'Kelas berhasil diperbarui!');
+                        redirect('index.php?page=kelas');
+                    } else {
+                        $error = 'Gagal memperbarui kelas!';
+                    }
+                }
             }
         }
     }

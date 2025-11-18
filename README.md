@@ -1,112 +1,99 @@
-# Struktur-AI - Admin Panel & Game Management System
+# **📘 Siap Ingat – Dokumentasi Sistem**
 
-## 📋 Deskripsi Proyek
+Sistem **Siap Ingat** adalah platform pengelolaan kelas dan pengingat (reminder) yang digunakan oleh Admin, PJ Kelas, dan Murid untuk memastikan kegiatan kelas berjalan teratur dan terpantau.
 
-Template repository untuk sistem admin panel dengan manajemen game. Proyek ini menyediakan struktur dasar untuk sistem manajemen pengguna dan game dengan otentikasi serta sistem otorisasi.
+Dokumentasi ini menjelaskan **role**, **hak akses**, dan **alur aktivitas** dalam sistem.
 
-## 🚀 Instalasi
+---
 
-### Prasyarat
-- PHP 7.4 atau lebih tinggi
-- MySQL/MariaDB
-- Web server (Apache/Nginx)
+## **👤 1. Role & Hak Akses**
 
-### Langkah-langkah Instalasi
+### **🛠️ Admin**
 
-1. **Clone repository atau gunakan sebagai template**
-   ```
-   git clone https://github.com/username/struktur-ai.git
-   # Atau gunakan tombol "Use this template" di GitHub
-   ```
+Admin memiliki akses penuh untuk mengelola seluruh data dan konfigurasi sistem.
 
-2. **Konfigurasi Database**
-   - Buat database baru di MySQL/MariaDB
-   - Import file `database/schema.sql` untuk skema utama
-   - Import file `database/game_schema.sql` untuk skema game
-   - **Catatan**: File skema mungkin sudah termasuk default admin user:
+Fitur yang dapat dikelola:
 
-     -- Insert default admin user
-     -- Username: admin
-     -- Password: admin123
+* Role (Admin, PJ Kelas, Murid)
+* User
+* Murid
+* Kelas
+* Murid dalam Kelas
+* Kategori Reminder
+* Reminder:
 
-3. **Konfigurasi Aplikasi**
-   - Buka file `config.php`
-   - Sesuaikan konfigurasi database:
-     ```php
-     define('DB_HOST', 'localhost');        // Host database
-     define('DB_USER', 'root');             // Username database
-     define('DB_PASS', '');                 // Password database
-     define('DB_NAME', 'admin_panel_db');   // Nama database
-     ```
-   - Atur BASE_URL sesuai dengan lokasi proyek Anda:
-     ```php
-     define('BASE_URL', 'http://localhost/latihan/struktur-ai/');
-     ```
+  * Reminder Global (untuk semua kelas)
+  * Reminder Khusus Per Kelas
+* Profil
+* Setting (Ganti Password)
 
-4. **Struktur Folder**
-   - Buat folder `assets/uploads/avatars/` dan pastikan web server memiliki izin untuk menulis di folder ini
+---
 
-5. **Akses Aplikasi**
-   - Buka browser dan akses URL proyek
-   - Gunakan kredensial default berikut untuk login pertama:
-     - Username: `admin`
-     - Password: `admin123`
-   - Sebaiknya ubah password default setelah login pertama untuk alasan keamanan
+### **👨‍🏫 PJ Kelas**
 
-## 📁 Struktur Folder
+Penanggung Jawab Kelas hanya mengelola kelas yang ditugaskan kepadanya.
 
-```
-struktur-ai/
-│
-├── index.php                      # Entry point aplikasi
-├── config.php                     # Konfigurasi database & konstanta
-├── README.md                      # Dokumentasi proyek
-│
-├── includes/
-│   ├── header.php                 # Header HTML & Navigation
-│   ├── footer.php                 # Footer HTML
-│   ├── sidebar.php                # Sidebar navigation
-│   ├── functions.php              # Fungsi-fungsi helper
-│   ├── db_connect.php             # Koneksi database
-│   └── auth_check.php             # Cek authentication & authorization
-│
-├── pages/
-│   ├── dashboard/
-│   │   └── index.php              # Dashboard
-│   │
-│   ├── profile/
-│   │   └── index.php              # Profile
-│   │
-│   ├── users/
-│   │   ├── index.php              # List users
-│   │   ├── create.php             # Create user
-│   │   ├── edit.php               # Edit user
-│   │   └── delete.php             # Delete user
-│   │
-│   ├── games/
-│   │   ├── index.php              # List games
-│   │   ├── create.php             # Create game
-│   │   ├── edit.php               # Edit game
-│   │   └── delete.php             # Delete game
-│   │
-│   ├── settings/
-│   │   └── index.php              # Settings
-│   │
-│   ├── auth/
-│   │   ├── login.php              # Login
-│   │   └── logout.php             # Logout
-│   │
-│   └── errors/
-│       └── 403.php                # Access Denied
-│
-├── assets/
-│   ├── css/
-│   ├── js/
-│   ├── images/
-│   └── uploads/
-│       └── avatars/
-│
-└── database/
-    ├── schema.sql                 # Skema database utama
-    └── game_schema.sql            # Skema database untuk game
-```
+Fitur PJ:
+
+* Melihat dan mengelola informasi kelas
+* Mengganti token kelas
+* Mengelola murid dalam kelas
+* Membuat reminder khusus untuk kelasnya
+* Melihat reminder global & reminder kelas
+
+---
+
+### **🎓 Murid**
+
+Murid memiliki akses terbatas.
+
+Fitur murid:
+
+* Melihat informasi kelas yang diikuti
+* Melihat seluruh reminder yang berlaku untuk kelas
+
+---
+
+## **🔄 2. Alur Aktivitas Sistem**
+
+### **1️⃣ Registrasi Murid**
+
+* Murid melakukan registrasi melalui sistem.
+* Jika murid adalah **PJ Kelas**, maka admin akan menambahkan murid tersebut secara manual dan memberi role PJ.
+* Jika bukan PJ, pengguna otomatis menjadi **Murid biasa**.
+
+---
+
+### **2️⃣ Admin Menambahkan Kelas**
+
+Saat membuat kelas baru, admin akan:
+
+1. Memilih PJ Kelas
+2. Menambahkan kategori reminder yang diperlukan
+3. Membuat reminder:
+
+   * Global (berlaku untuk semua kelas)
+   * Khusus untuk kelas tertentu
+
+---
+
+### **3️⃣ Pengelolaan Kelas oleh PJ Kelas**
+
+Setelah kelas aktif:
+
+1. PJ melihat informasi kelas
+2. Mengganti token kelas jika diperlukan
+   (Token digunakan murid untuk bergabung ke kelas)
+3. Membagikan token kelas kepada murid
+4. Membuat reminder khusus untuk kelasnya
+
+---
+
+## **📘 Ringkasan Sistem**
+
+* **Admin**: Pusat kontrol seluruh sistem
+* **PJ Kelas**: Pengelola kelas masing-masing
+* **Murid**: Penerima informasi dan reminder
+
+Alur singkat sistem:
+**Registrasi → Pembuatan Kelas → Pengaturan Reminder → Murid menerima Informasi**

@@ -87,14 +87,102 @@ switch ($action) {
                    placeholder="Cari nama murid atau nama kelas..."
                    class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
         </div>
-        <select name="murid" class="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
-            <option value="">Semua Murid</option>
-            <?php foreach ($muridList as $murid): ?>
-                <option value="<?php echo $murid['id']; ?>" <?php echo $muridFilter === $murid['id'] ? 'selected' : ''; ?>>
-                    <?php echo htmlspecialchars($murid['nama_lengkap']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+        <!-- Searchable Murid Selection -->
+        <div class="relative">
+            <input type="hidden" name="murid" id="murid_hidden" value="<?php echo $muridFilter; ?>">
+            <input type="text"
+                   id="murid_search"
+                   placeholder="Pilih murid..."
+                   value="<?php
+                          if($muridFilter) {
+                              $selected_murid = null;
+                              foreach($muridList as $murid) {
+                                  if($murid['id'] == $muridFilter) {
+                                      $selected_murid = $murid;
+                                      break;
+                                  }
+                              }
+                              echo $selected_murid ? htmlspecialchars($selected_murid['nama_lengkap']) : '';
+                          }
+                        ?>"
+                   class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+            <div id="murid_dropdown" class="absolute z-10 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-1 max-h-60 overflow-y-auto hidden">
+                <div class="p-2">
+                    <input type="text"
+                           id="murid_filter"
+                           placeholder="Cari murid..."
+                           class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+                </div>
+                <div id="murid_options" class="max-h-40 overflow-y-auto">
+                    <div class="murid-option px-4 py-2 cursor-pointer hover:bg-blue-50 <?php echo !$muridFilter ? 'selected' : ''; ?>" data-id="" data-name="">
+                        Semua Murid
+                    </div>
+                    <?php foreach ($muridList as $murid): ?>
+                        <div class="murid-option px-4 py-2 cursor-pointer hover:bg-blue-50 <?php echo $muridFilter === $murid['id'] ? 'selected bg-blue-50' : ''; ?>" data-id="<?php echo $murid['id']; ?>" data-name="<?php echo htmlspecialchars($murid['nama_lengkap']); ?>">
+                            <?php echo htmlspecialchars($murid['nama_lengkap']); ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .murid-option.selected {
+                background-color: #dbeafe;
+            }
+        </style>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('murid_search');
+            const hiddenInput = document.getElementById('murid_hidden');
+            const dropdown = document.getElementById('murid_dropdown');
+            const filterInput = document.getElementById('murid_filter');
+            const options = document.querySelectorAll('.murid-option');
+
+            // Toggle dropdown visibility
+            searchInput.addEventListener('click', function() {
+                dropdown.classList.toggle('hidden');
+            });
+
+            // Select option
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const name = this.getAttribute('data-name');
+                    hiddenInput.value = id;
+                    searchInput.value = name || 'Pilih murid...';
+                    dropdown.classList.add('hidden');
+
+                    // Update selected class
+                    options.forEach(opt => opt.classList.remove('selected', 'bg-blue-50'));
+                    if(id) {
+                        this.classList.add('selected', 'bg-blue-50');
+                    }
+                });
+            });
+
+            // Filter options based on search
+            filterInput.addEventListener('input', function() {
+                const filterValue = this.value.toLowerCase();
+                options.forEach(option => {
+                    const optionText = option.textContent.toLowerCase();
+                    if (optionText.includes(filterValue)) {
+                        option.style.display = '';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+            });
+
+            // Hide dropdown when clicking elsewhere
+            document.addEventListener('click', function(e) {
+                if (!dropdown.contains(e.target) && e.target !== searchInput) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        });
+        </script>
         <select name="kelas" class="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
             <option value="">Semua Kelas</option>
             <?php foreach ($kelasList as $kelas): ?>
