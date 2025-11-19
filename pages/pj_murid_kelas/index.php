@@ -154,65 +154,56 @@ if (isset($_POST['delete_student']) && isset($_POST['murid_kelas_id'])) {
                 </div>
             </div>
             
-            <!-- Students table -->
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No HP</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bergabung</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <?php if (count($students) > 0): ?>
-                            <?php foreach ($students as $student): ?>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-10 w-10">
-                                                <img class="h-10 w-10 rounded-full" src="<?php echo getAvatarUrl(null); ?>" alt="<?php echo htmlspecialchars($student['nama_lengkap']); ?>">
-                                            </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900"><?php echo htmlspecialchars($student['nama_lengkap']); ?></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo htmlspecialchars($student['email']); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo htmlspecialchars($student['no_hp']); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo date('d M Y', strtotime($student['joined_at'])); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <!-- Individual delete button -->
-                                        <form method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus murid <?php echo addslashes(htmlspecialchars($student['nama_lengkap'])); ?> dari kelas ini?');">
-                                            <input type="hidden" name="murid_kelas_id" value="<?php echo $student['murid_kelas_id']; ?>">
-                                            <input type="hidden" name="delete_student" value="1">
-                                            <button type="submit" class="text-red-600 hover:text-red-900 transition-colors">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
-                                    Tidak ada murid dalam kelas ini
-                                </td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+            <!-- Students as cards -->
+            <div class="mt-4">
+                <?php if (count($students) > 0): ?>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <?php foreach ($students as $student): ?>
+                            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-10 w-10 rounded-full" src="<?php echo getAvatarUrl(null); ?>" alt="<?php echo htmlspecialchars($student['nama_lengkap']); ?>">
+                                    </div>
+                                    <div class="font-medium text-gray-900"><?php echo htmlspecialchars($student['nama_lengkap']); ?></div>
+                                </div>
+
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex">
+                                        <div class="w-24 text-xs text-gray-500">Email</div>
+                                        <div class="text-gray-700"><?php echo htmlspecialchars($student['email']); ?></div>
+                                    </div>
+                                    <div class="flex">
+                                        <div class="w-24 text-xs text-gray-500">No HP</div>
+                                        <div class="text-gray-700"><?php echo htmlspecialchars($student['no_hp']); ?></div>
+                                    </div>
+                                    <div class="flex">
+                                        <div class="w-24 text-xs text-gray-500">Bergabung</div>
+                                        <div class="text-gray-700"><?php echo date('d M Y', strtotime($student['joined_at'])); ?></div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 pt-3 border-t">
+                                    <!-- Individual delete button -->
+                                    <form method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus murid <?php echo addslashes(htmlspecialchars($student['nama_lengkap'])); ?> dari kelas ini?');">
+                                        <input type="hidden" name="murid_kelas_id" value="<?php echo $student['murid_kelas_id']; ?>">
+                                        <input type="hidden" name="delete_student" value="1">
+                                        <button type="submit" class="text-red-600 hover:text-red-900 transition-colors inline-flex items-center">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="text-center py-4 text-gray-500">
+                        Tidak ada murid dalam kelas ini
+                    </div>
+                <?php endif; ?>
             </div>
-            
-            <?php if (count($students) === 0): ?>
-                <div class="text-center py-6 text-gray-500">
-                    Tidak ada murid dalam kelas ini
-                </div>
-            <?php endif; ?>
         </div>
     <?php endforeach; ?>
 <?php else: ?>
